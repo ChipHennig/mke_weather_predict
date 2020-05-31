@@ -22,7 +22,9 @@ def sarima_train(data):
     joblib.dump(model, 'sarima_model.pkl', compress=True)
 
 
-def sarima_pred(last_date, predict_date):
+def sarima_pred(predict_date):
+    last_date = date(2020, 5, 27)
+    predict_date = datetime.strptime(predict_date, "%Y-%m-%d").date()
     days_after = predict_date - last_date
     model = joblib.load('sarima_model.pkl')
     print(model.predict(days_after.days)[-1])
@@ -56,7 +58,7 @@ def run(init_run=True):
 
     # time_series_avg = avg.set_index('DATE')
     # sarima_train(time_series_avg)
-    sarima_pred(last_date, date(2020, 5, 30))
+    sarima_pred("2020-5-30")
 
 
 run(init_run=False)
