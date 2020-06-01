@@ -1,3 +1,11 @@
+"""
+file_io.py provides functions parse file data from the GHCN-Daily dataset:
+https://data.nodc.noaa.gov/cgi-bin/iso?id=gov.noaa.ncdc:C00861
+
+The tables are returned as pandas DataFrames
+:author: Christian Hennig
+"""
+
 import os
 import pandas as pd
 from calendar import monthrange
@@ -34,7 +42,7 @@ def read_stations(stations_path):
 
 def read_temperatures(temperatures_url, station_list, init_parse=True):
     """
-    If init_parse=True, downloads data from the ghcn_daily dataset temperatures_url
+    If init_parse=True, downloads data from the GHCN-Daily dataset temperatures_url
     Reads the csv files downloaded and append them into a single dataframe
 
     :param temperatures_url:
@@ -66,8 +74,9 @@ def read_temperatures(temperatures_url, station_list, init_parse=True):
 
 def read_temperatures_dly(temperatures_path):
     """
-    Reads files of .dly type (not completely functional)
+    Reads GHCN-Daily files of .dly type
     Not used for data currently in database
+    (NOTE: This function does not parse missing data types correctly)
 
     :param temperatures_path:
     :return:

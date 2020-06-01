@@ -1,10 +1,20 @@
+"""
+train_sarima.py provides
+
+1) functions to import and query
+data from the sqlite database: /data/mke_weather.db
+
+2) functions to train a SARIMA statsmodel from pmdarima:
+http://alkaline-ml.com/pmdarima/
+
+A pretrained model exists at: sarima_model.pkl
+"""
 import pandas as pd
 import pmdarima as pm
 import src.file_io as io
 import _sqlite3
 import joblib
 from datetime import date
-from datetime import datetime
 
 
 def create_table(sql_conn, table_name, df):
@@ -16,6 +26,15 @@ def get_table_df(sql_conn, table_name):
     return df
 
 
+def make_avg_temp(sql_conn):
+    avg_df = pd.read_sql_query("""
+        SELECT DATE, (TMAX + TMIN) / 2 AS AVG_TEMP
+        FROM   TEMPERATURES
+        """, sql_conn)
+    avg_df = avg_df.astype({"AVG_TEMP": 'float16'})
+    return avg_df
+
+
 def sarima_train(data):
     model = pm.arima.auto_arima(data, seasonal=True, m=4)
     print(model.summary())
@@ -23,11 +42,13 @@ def sarima_train(data):
 
 
 def sarima_pred(predict_date):
+    # The most recent date from my training data
+    # Find this with: last_date = datetime.strptime(avg.iloc[-1].DATE, "%Y-%m-%d %H:%M:%S").date()
     last_date = date(2020, 5, 27)
-    predict_date = datetime.strptime(predict_date, "%Y-%m-%d").date()
     days_after = predict_date - last_date
     model = joblib.load('sarima_model.pkl')
-    print(model.predict(days_after.days)[-1])
+    prediction = model.predict(days_after.days)[-1]
+    print("SARIMA prediction in Celsius: " + str(prediction))
 
 
 def run(init_run=True):
@@ -48,17 +69,12 @@ def run(init_run=True):
 
         print(get_table_df(conn, "TEMPERATURES"))
 
-    avg = pd.read_sql_query("""
-    SELECT DATE, (TMAX + TMIN) / 2 AS AVG_TEMP
-    FROM   TEMPERATURES
-    """, conn)
-    avg = avg.astype({"AVG_TEMP": 'float16'})
-    last_date = datetime.strptime(avg.iloc[-1].DATE, "%Y-%m-%d %H:%M:%S").date()
+    avg = make_avg_temp(conn)
     print(avg)
 
     # time_series_avg = avg.set_index('DATE')
     # sarima_train(time_series_avg)
-    sarima_pred("2020-5-30")
+    sarima_pred(date(2020, 6, 1))
 
 
 run(init_run=False)
