@@ -1,5 +1,5 @@
 # mke_weather_predict
-A [SARIMA](https://machinelearningmastery.com/sarima-for-time-series-forecasting-in-python/) model trained on the [GHCN-Daily historical weather dataset](https://data.nodc.noaa.gov/cgi-bin/iso?id=gov.noaa.ncdc:C00861).
+A [SARIMA](https://machinelearningmastery.com/sarima-for-time-series-forecasting-in-python/) model trained on the [GHCN-Daily historical weather dataset](https://www.ncdc.noaa.gov/ghcn-daily-description).
 
 Notes:
 1. A pretrained model is located at src/sarima_model.pkl
