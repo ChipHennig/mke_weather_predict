@@ -10,8 +10,3 @@ Notes:
 - pandas
 - SQLite
 - pmdarima
-
-## [Website](http://hi.mke-weather-sarima.com/)
-- is a Flask app on AWS Elastic Beanstalk
-- uses [OpenWeather](https://openweathermap.org/api) API for current weather data
-- might include other trained models in the future!
